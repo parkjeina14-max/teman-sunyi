@@ -1,4 +1,4 @@
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -6,34 +6,41 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const openai = new OpenAIApi(new Configuration({
+// Inisialisasi OpenAI versi terbaru
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-}));
+});
 
-// DATABASE SEDERHANA (Ganti dengan PostgreSQL/Supabase untuk produksi)
 let userSessions = {};
 
-// SYSTEM PROMPT: Mengatur Persona Kukang
-const KUKANG_PERSONA = `
-Bertindaklah sebagai "Teman Sunyi", seekor Kukang (Sloth) yang bijak, tenang, dan berbicara perlahan. 
-Tujuanmu adalah membantu mahasiswa mengatasi burnout dan FOMO.
-Aturan:
-1. Jangan beri solusi medis.
-2. Gunakan teknik Active Listening (validasi perasaan user).
-3. Tanya balik secara reflektif untuk memicu kesadaran diri.
-4. Gaya bahasa: Menenangkan, menggunakan analogi alam (pohon, hutan, angin).
-5. Di akhir percakapan (setelah 5-10 pesan), buatkan rangkuman jurnal otomatis.
-`;
+const KUKANG_PERSONA = `Bertindaklah sebagai "Teman Sunyi", seekor Kukang bijak. 
+Tujuanmu membantu mahasiswa mengatasi burnout dan FOMO dengan bahasa yang tenang dan empati.`;
 
-// ENDPOINT UNTUK MENERIMA PESAN WHATSAPP (Via Twilio Webhook)
 app.post("/whatsapp", async (req, res) => {
-    const userPhone = req.body.From;
-    const userMsg = req.body.Body;
+  const incomingMsg = req.body.Body;
+  const from = req.body.From;
 
-    // Inisialisasi sesi jika baru
-    if (!userSessions[userPhone]) {
-        userSessions[userPhone] = { messages: [{ role: "system", content: KUKANG_PERSONA }], count: 0 };
-    }
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: KUKANG_PERSONA },
+        { role: "user", content: incomingMsg }
+      ],
+    });
+
+    const reply = response.choices[0].message.content;
+    res.send(`<Response><Message>${reply}</Message></Response>`);
+  } catch (error) {
+    console.error(error);
+    res.send("<Response><Message>Maaf, si Kukang lagi meditasi sebentar. Coba lagi ya!</Message></Response>");
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server jalan di port ${PORT}`);
+});
 
     const session = userSessions[userPhone];
     session.messages.push({ role: "user", content: userMsg });

@@ -72,7 +72,7 @@ app.post("/whatsapp", async (req, res) => {
 async function createJournalSummary(history) {
     const prompt = "Berdasarkan percakapan di atas, buatkan rangkuman jurnal singkat: 1. Momen terberat hari ini, 2. Hal yang disyukuri, 3. Pesan semangat dari Kukang.";
     const response = await openai.createChatCompletion({
-        model: "gpt-4-mini",
+        model: "gpt-4o-mini",
         messages: [...history, { role: "user", content: prompt }]
     });
     return response.data.choices[0].message.content;

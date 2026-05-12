@@ -7,7 +7,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const openai = new OpenAIApi(new Configuration({
-  apiKey: "YOUR_OPENAI_API_KEY",
+  apiKey: process.env.OPENAI_API_KEY,
 }));
 
 // DATABASE SEDERHANA (Ganti dengan PostgreSQL/Supabase untuk produksi)

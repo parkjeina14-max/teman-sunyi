@@ -4,9 +4,9 @@
   "description": "Bot WhatsApp Teman Sunyi",
   "main": "index.js",
   "dependencies": {
-    "openai": "^4.0.0",
+    "openai": "^4.55.0",
     "express": "^4.18.2",
-    "body-parser": "^1.20.2",
+    "body-pars\"version\": \"1.0.0\",er": "^1.20.2",
     "twilio": "^4.19.0"
   },
   "scripts": {

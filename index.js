@@ -21,9 +21,9 @@ app.post("/whatsapp", async (req, res) => {
   try {
     // Meminta jawaban dari OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: KUKANG_PERSONA },
+        { rol{ role: \"system\", content: KUKANG_PERSONA },e: "system", content: KUKANG_PERSONA },
         { role: "user", content: incomingMsg }
       ],
     });
